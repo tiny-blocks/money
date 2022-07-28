@@ -1,0 +1,25 @@
+{
+    "timeout": 10,
+    "testFramework": "phpunit",
+    "tmpDir": "report/",
+    "source": {
+        "directories": [
+            "src"
+        ]
+    },
+    "logs": {
+        "text": "report/logs/infection-text.log",
+        "summary": "report/logs/infection-summary.log"
+    },
+    "mutators": {
+        "@default": true,
+        "DecrementInteger": false,
+        "IncrementInteger": false,
+        "MethodCallRemoval": false,
+        "ProtectedVisibility": false
+    },
+    "phpUnit": {
+        "configDir": "",
+        "customPath": "./vendor/bin/phpunit"
+    }
+}
