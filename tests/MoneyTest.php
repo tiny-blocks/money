@@ -72,7 +72,7 @@ final class MoneyTest extends TestCase
         $template .= 'The scale must be less than or equal to <2>.';
 
         $this->expectException(InvalidCurrencyScale::class);
-        $this->expectErrorMessage($template);
+        $this->expectExceptionMessage($template);
 
         Money::from(value: 10.1234, currency: Currency::BRL);
     }
@@ -83,7 +83,7 @@ final class MoneyTest extends TestCase
         $template .= 'The currencies must be the same to perform this operation.';
 
         $this->expectException(DifferentCurrencies::class);
-        $this->expectErrorMessage($template);
+        $this->expectExceptionMessage($template);
 
         $augend = Money::from(value: 100, currency: Currency::BRL);
         $addend = Money::from(value: '1.50', currency: Currency::USD);
@@ -97,7 +97,7 @@ final class MoneyTest extends TestCase
         $template .= 'The currencies must be the same to perform this operation.';
 
         $this->expectException(DifferentCurrencies::class);
-        $this->expectErrorMessage($template);
+        $this->expectExceptionMessage($template);
 
         $minuend = Money::from(value: 100, currency: Currency::BRL);
         $subtrahend = Money::from(value: '1.50', currency: Currency::EUR);
@@ -111,7 +111,7 @@ final class MoneyTest extends TestCase
         $template .= 'The currencies must be the same to perform this operation.';
 
         $this->expectException(DifferentCurrencies::class);
-        $this->expectErrorMessage($template);
+        $this->expectExceptionMessage($template);
 
         $multiplicand = Money::from(value: 100, currency: Currency::BRL);
         $multiplier = Money::from(value: '1.50', currency: Currency::GBP);
@@ -125,7 +125,7 @@ final class MoneyTest extends TestCase
         $template .= 'The currencies must be the same to perform this operation.';
 
         $this->expectException(DifferentCurrencies::class);
-        $this->expectErrorMessage($template);
+        $this->expectExceptionMessage($template);
 
         $dividend = Money::from(value: 100, currency: Currency::BRL);
         $divisor = Money::from(value: '1.50', currency: Currency::CHF);
