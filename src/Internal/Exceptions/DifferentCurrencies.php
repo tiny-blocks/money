@@ -11,6 +11,6 @@ final class DifferentCurrencies extends RuntimeException
     {
         $template = 'Currencies <%s> and <%s> are different. ';
         $template .= 'The currencies must be the same to perform this operation.';
-        parent::__construct(sprintf($template, $currencyOne->value, $currencyTwo->value));
+        parent::__construct(message: sprintf($template, $currencyOne->value, $currencyTwo->value));
     }
 }
