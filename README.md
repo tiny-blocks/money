@@ -54,7 +54,7 @@ $addend = Money::from(value: '1.50', currency: Currency::BRL);
 
 $result = $augend->add(addend: $addend);
 
-echo $result->amount->toString(); # 101.50
+$result->amount->toString(); # 101.50
 ```
 
 #### Subtraction
@@ -67,8 +67,7 @@ $subtrahend = Money::from(value: '0.50', currency: Currency::EUR);
 
 $result = $minuend->subtract(subtrahend: $subtrahend);
 
-echo $result->amount->toString(); # 10.00
-
+$result->amount->toString(); # 10.00
 ```
 
 #### Multiplication
@@ -81,8 +80,7 @@ $multiplier = Money::from(value: '3.12', currency: Currency::GBP);
 
 $result = $multiplicand->multiply(multiplier: $multiplier);
 
-echo $result->amount->toString(); # 15.60
-
+$result->amount->toString(); # 15.60
 ```
 
 #### Division
@@ -95,12 +93,14 @@ $divisor = Money::from(value: '5', currency: Currency::CHF);
 
 $result = $dividend->divide(divisor: $divisor);
 
-echo $result->amount->toString(); # 1.79
+$result->amount->toString(); # 1.79
 ```
+
+<div id='license'></div>
 
 ## License
 
-Math is licensed under [MIT](/LICENSE).
+Money is licensed under [MIT](LICENSE).
 
 <div id='contributing'></div>
 
