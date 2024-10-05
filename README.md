@@ -28,19 +28,41 @@ composer require tiny-blocks/money
 
 The library exposes a concrete implementation for representing and performing monetary operations.
 
-### Using the from method
+### Using from methods
 
-With the `from` method, a new instance of type `Money` is created from a valid numeric value. You can provide
-a `string`, `float` or `BigNumber` value.
+You can create a new instance of `Money` using one of the following methods based on the type of the value.
+
+#### From BigNumber
+
+With the `from` method, a new instance of type `Money` is created from a `BigNumber` value.
 
 ```php
-Money::from(value: 10, currency: 'BRL');
-Money::from(value: '10', currency: Currency::USD);
-Money::from(value: BigDecimal::from(value: '10'), currency: Currency::USD);
+use TinyBlocks\Math\BigNumber;
+use TinyBlocks\Currency\Currency;
+
+$currency = Currency::USD;
+$bigNumber = BigDecimal::from(value: '10');
+
+Money::from(value: $bigNumber, currency: $currency);
 ```
 
-Floating point values instantiated from a `float` may not be safe, as they are imprecise by design and may result in a
-loss of precision. Always prefer to instantiate from a `string`, which supports an unlimited amount digits.
+#### From float
+
+With the `fromFloat` method, a new instance of type `Money` is created from a `float` value. Note that floating point
+values
+are imprecise and may result in a loss of precision.
+
+```php
+Money::fromFloat(value: 10.00, currency: 'BRL');
+```
+
+#### From string
+
+With the `fromString` method, a new instance of type `Money` is created from a `string` value.
+
+```php
+Money::fromString(value: '10.00', currency: 'BRL');
+```
 
 ### Using the methods of mathematical operations
 
@@ -49,12 +71,15 @@ loss of precision. Always prefer to instantiate from a `string`, which supports 
 Performs an addition operation between this value and another value.
 
 ```php
-$augend = Money::from(value: '100', currency: 'BRL');
-$addend = Money::from(value: '1.50', currency: Currency::BRL);
+use TinyBlocks\Currency\Currency;
+
+$augend = Money::fromString(value: '100', currency: 'BRL');
+$addend = Money::fromString(value: '1.50', currency: Currency::BRL->value);
 
 $result = $augend->add(addend: $addend);
+$result->amount->toString();
 
-$result->amount->toString(); # 101.50
+# Output: 101.50
 ```
 
 #### Subtraction
@@ -62,12 +87,15 @@ $result->amount->toString(); # 101.50
 Performs a subtraction operation between this value and another value.
 
 ```php
-$minuend = Money::from(value: '10.50', currency: 'EUR');
-$subtrahend = Money::from(value: '0.50', currency: Currency::EUR);
+use TinyBlocks\Currency\Currency;
+
+$minuend = Money::fromString(value: '10.50', currency: 'EUR');
+$subtrahend = Money::fromString(value: '0.50', currency: Currency::EUR->value);
 
 $result = $minuend->subtract(subtrahend: $subtrahend);
+$result->amount->toString();
 
-$result->amount->toString(); # 10.00
+# Output: 10.00
 ```
 
 #### Multiplication
@@ -75,12 +103,15 @@ $result->amount->toString(); # 10.00
 Performs a multiplication operation between this value and another value.
 
 ```php
-$multiplicand = Money::from(value: '5', currency: 'GBP');
-$multiplier = Money::from(value: '3.12', currency: Currency::GBP);
+use TinyBlocks\Currency\Currency;
+
+$multiplicand = Money::fromString(value: '5', currency: 'GBP');
+$multiplier = Money::fromString(value: '3.12', currency: Currency::GBP->value);
 
 $result = $multiplicand->multiply(multiplier: $multiplier);
+$result->amount->toString(); 
 
-$result->amount->toString(); # 15.60
+# Output: 15.60
 ```
 
 #### Division
@@ -88,12 +119,15 @@ $result->amount->toString(); # 15.60
 Performs a division operation between this value and another value.
 
 ```php
-$dividend = Money::from(value: '8.99', currency: 'CHF');
-$divisor = Money::from(value: '5', currency: Currency::CHF);
+use TinyBlocks\Currency\Currency;
+
+$dividend = Money::fromString(value: '8.99', currency: 'CHF');
+$divisor = Money::fromString(value: '5', currency: Currency::CHF->value);
 
 $result = $dividend->divide(divisor: $divisor);
+$result->amount->toString();
 
-$result->amount->toString(); # 1.79
+# Output: 1.79
 ```
 
 <div id='license'></div>
