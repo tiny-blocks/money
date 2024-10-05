@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TinyBlocks\Money\Internal\Exceptions;
 
 use RuntimeException;
@@ -17,7 +19,7 @@ final class InvalidCurrencyScale extends RuntimeException
                 $template,
                 $amount->getScale(),
                 $currency->name,
-                $currency->getDefaultFractionDigits()
+                $currency->getFractionDigits()
             )
         );
     }
