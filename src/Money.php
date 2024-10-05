@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TinyBlocks\Money;
 
 use TinyBlocks\Currency\Currency;
@@ -10,23 +12,38 @@ use TinyBlocks\Money\Internal\Exceptions\InvalidCurrencyScale;
 use TinyBlocks\Vo\ValueObject;
 use TinyBlocks\Vo\ValueObjectAdapter;
 
-final class Money implements ValueObject
+final readonly class Money implements ValueObject
 {
     use ValueObjectAdapter;
 
-    private function __construct(public readonly BigNumber $amount, public readonly Currency $currency)
-    {
-        $withAmountScale = $this->amount->multiply(multiplier: BigDecimal::from(value: 1));
+    private const ONE = 1;
 
-        if ($withAmountScale->getScale() > $this->currency->getDefaultFractionDigits()) {
+    private function __construct(public BigNumber $amount, public Currency $currency)
+    {
+        $withAmountScale = $this->amount->multiply(multiplier: BigDecimal::from(value: self::ONE));
+
+        if ($withAmountScale->getScale() > $this->currency->getFractionDigits()) {
             throw new InvalidCurrencyScale(amount: $withAmountScale, currency: $this->currency);
         }
     }
 
-    public static function from(float|string|BigNumber $value, string|Currency $currency): Money
+    public static function from(BigNumber $value, Currency $currency): Money
     {
-        $currency = is_string($currency) ? Currency::from(value: $currency) : $currency;
-        $amount = is_scalar($value) ? BigDecimal::from(value: $value) : $value;
+        return new Money(amount: $value, currency: $currency);
+    }
+
+    public static function fromFloat(float $value, string $currency): Money
+    {
+        $amount = BigDecimal::from(value: $value);
+        $currency = Currency::from(value: $currency);
+
+        return new Money(amount: $amount, currency: $currency);
+    }
+
+    public static function fromString(string $value, string $currency): Money
+    {
+        $amount = BigDecimal::from(value: $value);
+        $currency = Currency::from(value: $currency);
 
         return new Money(amount: $amount, currency: $currency);
     }
@@ -39,7 +56,7 @@ final class Money implements ValueObject
 
         $result = $this->amount->add(addend: $addend->amount);
 
-        return self::from(value: $result->toString(), currency: $this->currency);
+        return self::fromString(value: $result->toString(), currency: $this->currency->value);
     }
 
     public function subtract(Money $subtrahend): Money
@@ -50,7 +67,7 @@ final class Money implements ValueObject
 
         $result = $this->amount->subtract(subtrahend: $subtrahend->amount);
 
-        return self::from(value: $result->toString(), currency: $this->currency);
+        return self::fromString(value: $result->toString(), currency: $this->currency->value);
     }
 
     public function multiply(Money $multiplier): Money
@@ -61,7 +78,7 @@ final class Money implements ValueObject
 
         $result = $this->amount->multiply(multiplier: $multiplier->amount);
 
-        return self::from(value: $result->toString(), currency: $this->currency);
+        return self::fromString(value: $result->toString(), currency: $this->currency->value);
     }
 
     public function divide(Money $divisor): Money
@@ -72,9 +89,9 @@ final class Money implements ValueObject
 
         $result = $this->amount
             ->divide(divisor: $divisor->amount)
-            ->withScale(scale: $this->currency->getDefaultFractionDigits());
+            ->withScale(scale: $this->currency->getFractionDigits());
 
-        return self::from(value: $result->toString(), currency: $this->currency);
+        return self::fromString(value: $result->toString(), currency: $this->currency->value);
     }
 
     private function areCurrenciesDifferent(Currency $currency): bool
