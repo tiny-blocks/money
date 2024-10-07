@@ -12,6 +12,7 @@ use TinyBlocks\Math\BigNumber;
 use TinyBlocks\Math\PositiveBigDecimal;
 use TinyBlocks\Money\Internal\Exceptions\DifferentCurrencies;
 use TinyBlocks\Money\Internal\Exceptions\InvalidCurrencyScale;
+use TinyBlocks\Money\Models\DiscountedMoney;
 
 final class MoneyTest extends TestCase
 {
@@ -22,8 +23,8 @@ final class MoneyTest extends TestCase
         $actual = Money::fromFloat(value: $value, currency: $currency);
 
         /** @Then the amount and currency should match the expected values */
-        self::assertEquals($expected, $actual->amount->toFloat());
-        self::assertEquals($currency, $actual->currency->value);
+        self::assertSame($expected, $actual->amount->toFloat());
+        self::assertSame($currency, $actual->currency->value);
     }
 
     #[DataProvider('stringDataProvider')]
@@ -33,8 +34,8 @@ final class MoneyTest extends TestCase
         $actual = Money::fromString(value: $value, currency: $currency);
 
         /** @Then the amount and currency should match the expected values */
-        self::assertEquals($expected, $actual->amount->toString());
-        self::assertEquals($currency, $actual->currency->value);
+        self::assertSame($expected, $actual->amount->toString());
+        self::assertSame($currency, $actual->currency->value);
     }
 
     #[DataProvider('bigNumberDataProvider')]
@@ -44,8 +45,8 @@ final class MoneyTest extends TestCase
         $actual = Money::from(value: $value, currency: $currency);
 
         /** @Then the amount and currency should match the expected values */
-        self::assertEquals($expected, $actual->amount->toString());
-        self::assertEquals($currency->value, $actual->currency->value);
+        self::assertSame($expected, $actual->amount->toString());
+        self::assertSame($currency->value, $actual->currency->value);
     }
 
     public function testAdd(): void
@@ -58,8 +59,8 @@ final class MoneyTest extends TestCase
         $actual = $augend->add(addend: $addend);
 
         /** @Then the result should be the sum of the amounts with the same currency */
-        self::assertEquals('101.50', $actual->amount->toString());
-        self::assertEquals(Currency::BRL->value, $actual->currency->value);
+        self::assertSame('101.50', $actual->amount->toString());
+        self::assertSame(Currency::BRL->value, $actual->currency->value);
     }
 
     public function testSubtract(): void
@@ -72,8 +73,8 @@ final class MoneyTest extends TestCase
         $actual = $minuend->subtract(subtrahend: $subtrahend);
 
         /** @Then the result should be the difference of the amounts with the same currency */
-        self::assertEquals('10.00', $actual->amount->toString());
-        self::assertEquals(Currency::EUR->value, $actual->currency->value);
+        self::assertSame('10.00', $actual->amount->toString());
+        self::assertSame(Currency::EUR->value, $actual->currency->value);
     }
 
     public function testMultiply(): void
@@ -86,8 +87,8 @@ final class MoneyTest extends TestCase
         $actual = $multiplicand->multiply(multiplier: $multiplier);
 
         /** @Then the result should be the product of the amounts with the same currency */
-        self::assertEquals('15.60', $actual->amount->toString());
-        self::assertEquals(Currency::GBP->value, $actual->currency->value);
+        self::assertSame('15.60', $actual->amount->toString());
+        self::assertSame(Currency::GBP->value, $actual->currency->value);
     }
 
     public function testDivide(): void
@@ -100,8 +101,8 @@ final class MoneyTest extends TestCase
         $actual = $dividend->divide(divisor: $divisor);
 
         /** @Then the result should be the quotient of the amounts with the same currency */
-        self::assertEquals('1.79', $actual->amount->toString());
-        self::assertEquals(Currency::CHF->value, $actual->currency->value);
+        self::assertSame('1.79', $actual->amount->toString());
+        self::assertSame(Currency::CHF->value, $actual->currency->value);
     }
 
     public function testInvalidCurrencyScale(): void
@@ -186,6 +187,34 @@ final class MoneyTest extends TestCase
         $dividend->divide(divisor: $divisor);
     }
 
+    public function testExtendedMoneyClass(): void
+    {
+        /** @Given a Money object with a specific amount and currency */
+        $money = DiscountedMoney::fromFloat(value: 100.00, currency: Currency::USD->value);
+
+        /** @When applying a discount */
+        $actual = $money->applyDiscount(discountPercentage: 10.00);
+
+        /** @Then the result should reflect the discounted amount */
+        self::assertSame('90.0', $actual->amount->toString());
+        self::assertSame(Currency::USD->value, $actual->currency->value);
+    }
+
+    public function testOperationBetweenMoneyAndDiscountedMoney(): void
+    {
+        /** @Given a Money object and a DiscountedMoney object with the same currency */
+        $money = Money::fromFloat(value: 200.05, currency: Currency::USD->value);
+        $discountedMoney = DiscountedMoney::fromFloat(value: 100.05, currency: Currency::USD->value);
+
+        /** @When adding them */
+        $actual = $money->add(addend: $discountedMoney);
+
+        /** @Then the result should be the sum of the amounts with the same currency */
+        self::assertSame(300.10, $actual->amount->toFloat());
+        self::assertSame('300.10', $actual->amount->toString());
+        self::assertSame(Currency::USD->value, $actual->currency->value);
+    }
+
     public static function floatDataProvider(): array
     {
         return [
@@ -252,12 +281,12 @@ final class MoneyTest extends TestCase
     {
         return [
             'Big decimal value'          => [
-                'value'    => BigDecimal::from(value: 999.12),
+                'value'    => BigDecimal::fromFloat(value: 999.12),
                 'currency' => Currency::BRL,
                 'expected' => '999.12'
             ],
             'Positive big decimal value' => [
-                'value'    => PositiveBigDecimal::from(value: '9.123'),
+                'value'    => PositiveBigDecimal::fromString(value: '9.123'),
                 'currency' => Currency::TND,
                 'expected' => '9.123'
             ]
