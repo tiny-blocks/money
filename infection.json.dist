@@ -12,7 +12,8 @@
         "summary": "report/infection/logs/infection-summary.log"
     },
     "mutators": {
-        "@default": true
+        "@default": true,
+        "ProtectedVisibility": false
     },
     "phpUnit": {
         "configDir": "",

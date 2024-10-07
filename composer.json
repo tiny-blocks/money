@@ -10,6 +10,7 @@
         "vo",
         "psr",
         "money",
+        "currency",
         "tiny-blocks",
         "value-object"
     ],
@@ -41,9 +42,8 @@
     },
     "require": {
         "php": "^8.2",
-        "tiny-blocks/math": "^2",
+        "tiny-blocks/math": "^3",
         "tiny-blocks/currency": "^2",
-        "tiny-blocks/value-object": "^2",
         "ext-bcmath": "*"
     },
     "require-dev": {
@@ -76,6 +76,9 @@
         "tests-no-coverage": [
             "@test-no-coverage",
             "@test-mutation-no-coverage"
+        ],
+        "tests-file-no-coverage": [
+            "@test-no-coverage"
         ]
     }
 }
